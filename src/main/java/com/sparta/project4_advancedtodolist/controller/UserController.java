@@ -1,6 +1,7 @@
 package com.sparta.project4_advancedtodolist.controller;
 
 import com.sparta.project4_advancedtodolist.dto.SignupRequestDto;
+import com.sparta.project4_advancedtodolist.dto.UserResponseDto;
 import com.sparta.project4_advancedtodolist.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -8,9 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,8 +21,8 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/user/signup")
-    public void signup(@Valid SignupRequestDto requestDto, BindingResult bindingResult) {
+    @PostMapping("/users/signup")
+    public UserResponseDto signup(@Valid SignupRequestDto requestDto, BindingResult bindingResult) {
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
         if (fieldErrors.size() > 0) {
             for (FieldError fieldError: bindingResult.getFieldErrors()) {
@@ -31,6 +30,16 @@ public class UserController {
             }
         }
 
-        userService.signup(requestDto);
+        return userService.signup(requestDto);
+    }
+
+    @GetMapping("/users")
+    public List<UserResponseDto> getUsers() {
+        return userService.getUsers();
+    }
+
+    @DeleteMapping("/users/{userId}")
+    public void deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
     }
 }

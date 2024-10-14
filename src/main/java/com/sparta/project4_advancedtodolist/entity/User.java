@@ -35,8 +35,9 @@ public class User extends TimeStamped {
     @OneToMany(mappedBy = "user")
     private List<Comment> commentList = new ArrayList<>();
 
-    public User(String username, String email, UserRole role) {
+    public User(String username, String password, String email, UserRole role) {
         this.username = username;
+        this.password = password;
         this.email = email;
         this.role = role;
     }
