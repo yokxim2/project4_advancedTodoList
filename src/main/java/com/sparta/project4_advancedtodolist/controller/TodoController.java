@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Slf4j
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -21,7 +20,7 @@ public class TodoController {
 
     @PostMapping("/todos")
     public TodoResponseDto createTodo(@RequestBody TodoRequestDto requestDto) {
-        return todoService.createTodo(requestDto);
+        return todoService.create(requestDto);
     }
 
     @GetMapping("/todos")
@@ -31,14 +30,16 @@ public class TodoController {
             @RequestParam("sortBy") String sortBy,
             @RequestParam("isAsc") boolean isAsc
     ) {
-        return todoService.getTodos(page - 1, size, sortBy, isAsc);
+        return todoService.get(page - 1, size, sortBy, isAsc);
     }
 
     @PutMapping("/todos/{todoId}")
     public TodoResponseDto updateTodo(@PathVariable Long id, @RequestBody TodoRequestDto requestDto) {
-        return todoService.updateTodo(id, requestDto);
+        return todoService.update(id, requestDto);
     }
 
     @DeleteMapping("/todos/{todoId}")
-    public
+    public void deleteTodo(@PathVariable Long id) {
+        return todoService.delete(id);
+    }
 }
