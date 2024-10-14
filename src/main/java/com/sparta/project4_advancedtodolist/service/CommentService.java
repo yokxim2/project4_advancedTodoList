@@ -47,6 +47,7 @@ public class CommentService {
         commentRepository.delete(comment);
     }
 
+    // ==== 편의 메서드 ====
     @Transactional
     public Comment findCommentById(Long id) {
         Comment comment = commentRepository.findById(id).orElseThrow(

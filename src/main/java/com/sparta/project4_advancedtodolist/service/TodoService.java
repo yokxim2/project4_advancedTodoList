@@ -58,10 +58,7 @@ public class TodoService {
     public void deleteTodo(Long id) {
         Todo existTodo = findTodoById(id);
 
-        List<Comment> commentList = existTodo.getCommentList();
-        for (Comment comment : commentList) {
-            commentRepository.deleteById(comment.getId());
-        }
+        commentRepository.deleteAll(existTodo.getCommentList());
 
         todoRepository.delete(existTodo);
     }
