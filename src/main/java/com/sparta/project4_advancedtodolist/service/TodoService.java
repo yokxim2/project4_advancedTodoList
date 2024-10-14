@@ -4,6 +4,7 @@ import com.sparta.project4_advancedtodolist.dto.TodoRequestDto;
 import com.sparta.project4_advancedtodolist.dto.TodoResponseDto;
 import com.sparta.project4_advancedtodolist.entity.Comment;
 import com.sparta.project4_advancedtodolist.entity.Todo;
+import com.sparta.project4_advancedtodolist.repository.CommentRepository;
 import com.sparta.project4_advancedtodolist.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,8 +21,9 @@ import java.util.List;
 public class TodoService {
 
     private final TodoRepository todoRepository;
+    private final CommentRepository commentRepository;
 
-    public TodoResponseDto create(TodoRequestDto requestDto) {
+    public TodoResponseDto createTodo(TodoRequestDto requestDto) {
         Todo todo = todoRepository.save(
                 new Todo(requestDto.getTitle(),
                         requestDto.getContent()
@@ -31,7 +33,7 @@ public class TodoService {
     }
 
     @Transactional(readOnly = true)
-    public Page<TodoResponseDto> get(int page, int size, String sortBy, boolean isAsc) {
+    public Page<TodoResponseDto> getTodos(int page, int size, String sortBy, boolean isAsc) {
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -44,7 +46,7 @@ public class TodoService {
     }
 
     @Transactional
-    public TodoResponseDto update(Long id, TodoRequestDto requestDto) {
+    public TodoResponseDto updateTodo(Long id, TodoRequestDto requestDto) {
         Todo existTodo = findTodoById(id);
 
         existTodo.update(requestDto.getTitle(), requestDto.getContent());
@@ -53,12 +55,12 @@ public class TodoService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void deleteTodo(Long id) {
         Todo existTodo = findTodoById(id);
 
         List<Comment> commentList = existTodo.getCommentList();
         for (Comment comment : commentList) {
-//            commentRepository.delete(comment);
+            commentRepository.deleteById(comment.getId());
         }
 
         todoRepository.delete(existTodo);
