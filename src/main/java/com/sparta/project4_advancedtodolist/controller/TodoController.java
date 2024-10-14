@@ -19,12 +19,12 @@ public class TodoController {
     private final TodoService todoService;
 
     @PostMapping("/todos")
-    public TodoResponseDto createTodo(@RequestBody TodoRequestDto requestDto) {
+    public TodoResponseDto create(@RequestBody TodoRequestDto requestDto) {
         return todoService.create(requestDto);
     }
 
     @GetMapping("/todos")
-    public Page<TodoResponseDto> getTodos(
+    public Page<TodoResponseDto> get(
             @RequestParam("page") int page,
             @RequestParam("size") int size,
             @RequestParam("sortBy") String sortBy,
@@ -34,12 +34,12 @@ public class TodoController {
     }
 
     @PutMapping("/todos/{todoId}")
-    public TodoResponseDto updateTodo(@PathVariable Long id, @RequestBody TodoRequestDto requestDto) {
+    public TodoResponseDto update(@PathVariable Long id, @RequestBody TodoRequestDto requestDto) {
         return todoService.update(id, requestDto);
     }
 
     @DeleteMapping("/todos/{todoId}")
-    public void deleteTodo(@PathVariable Long id) {
-        return todoService.delete(id);
+    public void delete(@PathVariable Long id) {
+        todoService.delete(id);
     }
 }

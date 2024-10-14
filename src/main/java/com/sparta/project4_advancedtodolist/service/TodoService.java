@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class TodoService {
         return new TodoResponseDto(todo);
     }
 
+    @Transactional(readOnly = true)
     public Page<TodoResponseDto> get(int page, int size, String sortBy, boolean isAsc) {
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
@@ -41,6 +43,7 @@ public class TodoService {
         return todoList.map(TodoResponseDto::new);
     }
 
+    @Transactional
     public TodoResponseDto update(Long id, TodoRequestDto requestDto) {
         Todo existTodo = findTodoById(id);
 
@@ -49,18 +52,20 @@ public class TodoService {
         return new TodoResponseDto(existTodo);
     }
 
+    @Transactional
     public void delete(Long id) {
         Todo existTodo = findTodoById(id);
 
         List<Comment> commentList = existTodo.getCommentList();
         for (Comment comment : commentList) {
-            commentRepository.delete(comment);
+//            commentRepository.delete(comment);
         }
 
         todoRepository.delete(existTodo);
     }
 
     // ==== 편의 메서드 ====
+    @Transactional
     public Todo findTodoById(Long id) {
         Todo todo = todoRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 일정이 존재하지 않습니다.")
