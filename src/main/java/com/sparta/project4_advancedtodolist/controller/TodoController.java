@@ -5,10 +5,11 @@ import com.sparta.project4_advancedtodolist.dto.TodoResponseDto;
 import com.sparta.project4_advancedtodolist.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -21,5 +22,15 @@ public class TodoController {
     @PostMapping("/todos")
     public TodoResponseDto createTodo(@RequestBody TodoRequestDto requestDto) {
         return todoService.createTodo(requestDto);
+    }
+
+    @GetMapping("/todos")
+    public Page<TodoResponseDto> getTodos(
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+            @RequestParam("sortBy") String sortBy,
+            @RequestParam("isAsc") boolean isAsc
+    ) {
+        return todoService.getTodos();
     }
 }
