@@ -31,6 +31,14 @@ public class TodoController {
             @RequestParam("sortBy") String sortBy,
             @RequestParam("isAsc") boolean isAsc
     ) {
-        return todoService.getTodos();
+        return todoService.getTodos(page - 1, size, sortBy, isAsc);
     }
+
+    @PutMapping("/todos/{todoId}")
+    public TodoResponseDto updateTodo(@PathVariable Long id, @RequestBody TodoRequestDto requestDto) {
+        return todoService.updateTodo(id, requestDto);
+    }
+
+    @DeleteMapping("/todos/{todoId}")
+    public
 }

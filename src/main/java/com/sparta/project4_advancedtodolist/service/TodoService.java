@@ -37,4 +37,14 @@ public class TodoService {
 
         return todoList.map(TodoResponseDto::new);
     }
+
+    public TodoResponseDto updateTodo(Long id, TodoRequestDto requestDto) {
+        Todo existTodo = todoRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("해당 일정이 존재하지 않습니다.")
+        );
+
+        existTodo.update(requestDto.getTitle(), requestDto.getContent());
+
+        return new TodoResponseDto(existTodo);
+    }
 }
