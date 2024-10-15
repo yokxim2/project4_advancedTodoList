@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -23,6 +24,9 @@ public class Todo extends TimeStamped {
     @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL)
     List<Comment> commentList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "todo")
+    List<UserTodo> userTodoList = new ArrayList<>();
+
     public Todo(String title, String content) {
         this.title = title;
         this.content = content;
@@ -31,5 +35,18 @@ public class Todo extends TimeStamped {
     public void update(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Todo todo = (Todo) o;
+        return Objects.equals(getId(), todo.getId()) && Objects.equals(getTitle(), todo.getTitle()) && Objects.equals(getContent(), todo.getContent()) && Objects.equals(getCommentList(), todo.getCommentList());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getTitle(), getContent(), getCommentList());
     }
 }
