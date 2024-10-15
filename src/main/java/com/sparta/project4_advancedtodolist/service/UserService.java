@@ -1,6 +1,7 @@
 package com.sparta.project4_advancedtodolist.service;
 
 import com.sparta.project4_advancedtodolist.dto.SignupRequestDto;
+import com.sparta.project4_advancedtodolist.dto.UserRequestDto;
 import com.sparta.project4_advancedtodolist.dto.UserResponseDto;
 import com.sparta.project4_advancedtodolist.entity.User;
 import com.sparta.project4_advancedtodolist.entity.UserRole;
@@ -59,12 +60,19 @@ public class UserService {
     }
 
     @Transactional
+    public UserResponseDto updateUser(Long userId, @Valid UserRequestDto requestDto) {
+        User user = findUserById(userId);
+        user.update(requestDto.getUsername(), requestDto.getPassword(), requestDto.getEmail());
+        return new UserResponseDto(user);
+    }
+
+    @Transactional
     public void deleteUser(Long id) {
         User user = findUserById(id);
         userRepository.delete(user);
     }
-
     // ==== 편의 메서드 ====
+
     @Transactional
     public User findUserById(Long id) {
         User user = userRepository.findById(id).orElseThrow(
