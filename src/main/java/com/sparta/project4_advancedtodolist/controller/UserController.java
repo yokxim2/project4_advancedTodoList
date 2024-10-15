@@ -1,6 +1,7 @@
 package com.sparta.project4_advancedtodolist.controller;
 
 import com.sparta.project4_advancedtodolist.dto.SignupRequestDto;
+import com.sparta.project4_advancedtodolist.dto.UserRequestDto;
 import com.sparta.project4_advancedtodolist.dto.UserResponseDto;
 import com.sparta.project4_advancedtodolist.service.UserService;
 import jakarta.validation.Valid;
@@ -22,20 +23,18 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/users/signup")
-    public UserResponseDto signup(@Valid SignupRequestDto requestDto, BindingResult bindingResult) {
-        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-        if (fieldErrors.size() > 0) {
-            for (FieldError fieldError: bindingResult.getFieldErrors()) {
-                log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
-            }
-        }
-
+    public UserResponseDto signup(@Valid SignupRequestDto requestDto) {
         return userService.signup(requestDto);
     }
 
     @GetMapping("/users")
     public List<UserResponseDto> getUsers() {
         return userService.getUsers();
+    }
+
+    @PutMapping("/users/{userId}")
+    public UserResponseDto updateUser(@PathVariable Long userId, @Valid UserRequestDto requestDto) {
+        return userService.updateUser(userId, requestDto);
     }
 
     @DeleteMapping("/users/{userId}")

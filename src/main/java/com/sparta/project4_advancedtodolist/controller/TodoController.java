@@ -3,11 +3,14 @@ package com.sparta.project4_advancedtodolist.controller;
 import com.sparta.project4_advancedtodolist.dto.TodoRequestDto;
 import com.sparta.project4_advancedtodolist.dto.TodoResponseDto;
 import com.sparta.project4_advancedtodolist.service.TodoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -16,7 +19,7 @@ public class TodoController {
     private final TodoService todoService;
 
     @PostMapping("/todos")
-    public TodoResponseDto createTodo(@RequestBody TodoRequestDto requestDto) {
+    public TodoResponseDto createTodo(@Valid TodoRequestDto requestDto) {
         return todoService.createTodo(requestDto);
     }
 
@@ -31,12 +34,12 @@ public class TodoController {
     }
 
     @PutMapping("/todos/{todoId}")
-    public TodoResponseDto updateTodo(@PathVariable Long id, @RequestBody TodoRequestDto requestDto) {
-        return todoService.updateTodo(id, requestDto);
+    public TodoResponseDto updateTodo(@PathVariable Long todoId, @Valid TodoRequestDto requestDto) {
+        return todoService.updateTodo(todoId, requestDto);
     }
 
     @DeleteMapping("/todos/{todoId}")
-    public void deleteTodo(@PathVariable Long id) {
-        todoService.deleteTodo(id);
+    public void deleteTodo(@PathVariable Long todoId) {
+        todoService.deleteTodo(todoId);
     }
 }
