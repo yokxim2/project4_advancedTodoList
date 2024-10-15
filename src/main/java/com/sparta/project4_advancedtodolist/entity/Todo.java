@@ -1,6 +1,7 @@
 package com.sparta.project4_advancedtodolist.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,9 +28,13 @@ public class Todo extends TimeStamped {
     @OneToMany(mappedBy = "todo")
     List<UserTodo> userTodoList = new ArrayList<>();
 
-    public Todo(String title, String content) {
+    private Todo(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    public static Todo makeTodo(String title, String content) {
+        return new Todo(title, content);
     }
 
     public void update(String title, String content) {

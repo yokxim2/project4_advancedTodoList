@@ -30,7 +30,7 @@ public class Comment extends TimeStamped {
         this.content = content;
     }
 
-    public static Comment makeComment(String content, Todo todo, User user) {
+    public static Comment makeComment(Todo todo, User user, String content) {
         return new Comment(todo, user, content);
     }
 
