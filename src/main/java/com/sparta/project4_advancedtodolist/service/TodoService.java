@@ -1,9 +1,13 @@
 package com.sparta.project4_advancedtodolist.service;
 
+import com.sparta.project4_advancedtodolist.dto.ManagerRequestDto;
 import com.sparta.project4_advancedtodolist.dto.TodoRequestDto;
 import com.sparta.project4_advancedtodolist.dto.TodoResponseDto;
 import com.sparta.project4_advancedtodolist.entity.Todo;
+import com.sparta.project4_advancedtodolist.entity.User;
+import com.sparta.project4_advancedtodolist.entity.UserTodo;
 import com.sparta.project4_advancedtodolist.repository.TodoRepository;
+import com.sparta.project4_advancedtodolist.repository.UserTodoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,14 +21,31 @@ import org.springframework.transaction.annotation.Transactional;
 public class TodoService {
 
     private final TodoRepository todoRepository;
+    private final UserService userService;
+    private final UserTodoRepository userTodoRepository;
 
+    @Transactional
     public TodoResponseDto createTodo(TodoRequestDto requestDto) {
+        User existUser = userService.findUserById(requestDto.getUserId());
+
         Todo todo = todoRepository.save(
-                new Todo(requestDto.getTitle(),
+                Todo.makeTodo(
+                        requestDto.getTitle(),
                         requestDto.getContent()
                 )
         );
+
+        userTodoRepository.save(UserTodo.makeUserTodo(existUser,todo));
+
         return new TodoResponseDto(todo);
+    }
+
+    @Transactional
+    public void addManager(Long todoId, ManagerRequestDto requestDto) {
+        Todo existTodo = findTodoById(todoId);
+        User existUser = userService.findUserByUsername(requestDto.getUsername());
+
+        userTodoRepository.save(UserTodo.makeUserTodo(existUser, existTodo));
     }
 
     @Transactional(readOnly = true)
