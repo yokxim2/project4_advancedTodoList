@@ -2,7 +2,8 @@ package com.sparta.project4_advancedtodolist.service;
 
 import com.sparta.project4_advancedtodolist.dto.SignupRequestDto;
 import com.sparta.project4_advancedtodolist.dto.UserResponseDto;
-import com.sparta.project4_advancedtodolist.entity.*;
+import com.sparta.project4_advancedtodolist.entity.User;
+import com.sparta.project4_advancedtodolist.entity.UserRole;
 import com.sparta.project4_advancedtodolist.repository.CommentRepository;
 import com.sparta.project4_advancedtodolist.repository.TodoRepository;
 import com.sparta.project4_advancedtodolist.repository.UserRepository;
@@ -13,15 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
-    private final TodoRepository todoRepository;
-    private final CommentRepository commentRepository;
 
     public UserResponseDto signup(@Valid SignupRequestDto requestDto) {
         String username = requestDto.getUsername();
@@ -29,22 +27,23 @@ public class UserService {
         String email = requestDto.getEmail();
         UserRole role = UserRole.USER;
 
-        Optional<User> findByUsername = userRepository.findByUsername(username);
-        if (findByUsername.isPresent()) {
+        Boolean existDuplicatedUsername = userRepository.countAllByUsername(username) > 0;
+        if (existDuplicatedUsername) {
             throw new IllegalArgumentException("중복된 회원명이 존재합니다.");
         }
 
-        Optional<User> findByEmail = userRepository.findByEmail(email);
-        if (findByEmail.isPresent()) {
+        Boolean existDuplicateEmail = userRepository.countAllByEmail(email) > 0;
+        if (existDuplicateEmail) {
             throw new IllegalArgumentException("중복된 이메일이 존재합니다.");
         }
 
         if (requestDto.isAdmin()) {
             // Admin 토큰 비교 로직
+            // Admin signup은 따로 구현해야 한다.
             role = UserRole.ADMIN;
         }
 
-        User user = new User(username, password, email, role);
+        User user = User.signup(username, password, email);
         userRepository.save(user);
         return new UserResponseDto(user);
     }
@@ -62,17 +61,7 @@ public class UserService {
     @Transactional
     public void deleteUser(Long id) {
         User user = findUserById(id);
-
-        // 여기 어떻게 구현해야 하는가?
-        // 유저 삭제 시 일정을 삭제해야 한다. 하지만 중간 테이블이 섞여 있어서, 이렇게 하는게 아닌거 같음
-        List<UserTodo> userTodoList = user.getUserTodoList();
-        for (UserTodo ut : userTodoList) {
-            Todo todo = ut.getTodo();
-            todoRepository.delete(todo);
-        }
-
-        // 만약 삭제한 유저가 만든 일정에 댓글을 달았었다면, 삭제가 두번 이루어진다.
-        commentRepository.deleteAll(user.getCommentList());
+        userRepository.delete(user);
     }
 
     // ==== 편의 메서드 ====
