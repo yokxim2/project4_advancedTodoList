@@ -8,14 +8,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SignupRequestDto {
-    @NotBlank
+    @NotBlank(message = "아이디는 필수 입력 값입니다.")
     private String username;
 
-    @NotBlank
+    @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
     private String password;
 
-    @Pattern(regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
-    @NotBlank
+    @Pattern(regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$", message = "올바른 이메일 형식이 아닙니다.")
+    @NotBlank(message = "이메일은 필수 입력 값입니다.")
     private String email;
 
     private boolean isAdmin = false;
