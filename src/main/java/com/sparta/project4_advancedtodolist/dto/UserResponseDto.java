@@ -12,11 +12,15 @@ public class UserResponseDto {
     private String username;
     private String email;
     private UserRole role;
+    private String createdAt;
+    private String modifiedAt;
 
     public UserResponseDto(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.role = user.getRole();
+        this.createdAt = user.getCreatedAt().toString();
+        this.modifiedAt = user.getModifiedAt().toString();
     }
 }
