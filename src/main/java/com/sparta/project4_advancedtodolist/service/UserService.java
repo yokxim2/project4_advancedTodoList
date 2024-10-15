@@ -5,8 +5,6 @@ import com.sparta.project4_advancedtodolist.dto.UserRequestDto;
 import com.sparta.project4_advancedtodolist.dto.UserResponseDto;
 import com.sparta.project4_advancedtodolist.entity.User;
 import com.sparta.project4_advancedtodolist.entity.UserRole;
-import com.sparta.project4_advancedtodolist.repository.CommentRepository;
-import com.sparta.project4_advancedtodolist.repository.TodoRepository;
 import com.sparta.project4_advancedtodolist.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -71,13 +70,21 @@ public class UserService {
         User user = findUserById(id);
         userRepository.delete(user);
     }
-    // ==== 편의 메서드 ====
 
+    // ==== 편의 메서드 ====
     @Transactional
     public User findUserById(Long id) {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당하는 유저가 없습니다.")
         );
         return user;
+    }
+
+    @Transactional
+    public User findUserByUsername(String username) {
+        Optional<User> user = Optional.ofNullable(userRepository.findByUsername(username).orElseThrow(
+                () -> new IllegalArgumentException("해당하는 유저가 없습니다.")
+        ));
+        return user.get();
     }
 }
