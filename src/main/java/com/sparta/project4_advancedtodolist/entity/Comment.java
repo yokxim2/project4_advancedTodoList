@@ -1,6 +1,7 @@
 package com.sparta.project4_advancedtodolist.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,11 +24,18 @@ public class Comment extends TimeStamped {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Comment(String content) {
+    private Comment(Todo todo, User user, String content) {
+        this.todo = todo;
+        this.user = user;
         this.content = content;
+    }
+
+    public static Comment makeComment(String content, Todo todo, User user) {
+        return new Comment(todo, user, content);
     }
 
     public void update(String content) {
         this.content = content;
+
     }
 }
