@@ -1,5 +1,6 @@
 package com.sparta.project4_advancedtodolist.controller;
 
+import com.sparta.project4_advancedtodolist.dto.ManagerRequestDto;
 import com.sparta.project4_advancedtodolist.dto.TodoRequestDto;
 import com.sparta.project4_advancedtodolist.dto.TodoResponseDto;
 import com.sparta.project4_advancedtodolist.service.TodoService;
@@ -23,18 +24,29 @@ public class TodoController {
         return todoService.createTodo(requestDto);
     }
 
+    @PostMapping("/todos/{todoId}/add-manager")
+    public void addManager(
+            @PathVariable Long todoId,
+            @Valid ManagerRequestDto requestDto
+    ) {
+        todoService.addManager(todoId, requestDto);
+    }
+
     @GetMapping("/todos")
     public Page<TodoResponseDto> getTodos(
-            @RequestParam("page") int page,
-            @RequestParam("size") int size,
-            @RequestParam("sortBy") String sortBy,
-            @RequestParam("isAsc") boolean isAsc
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "sortBy", defaultValue = "modifiedAt") String sortBy,
+            @RequestParam(value = "isAsc", defaultValue = "false") boolean isAsc
     ) {
         return todoService.getTodos(page - 1, size, sortBy, isAsc);
     }
 
     @PutMapping("/todos/{todoId}")
-    public TodoResponseDto updateTodo(@PathVariable Long todoId, @Valid TodoRequestDto requestDto) {
+    public TodoResponseDto updateTodo(
+            @PathVariable Long todoId,
+            @Valid TodoRequestDto requestDto
+    ) {
         return todoService.updateTodo(todoId, requestDto);
     }
 
