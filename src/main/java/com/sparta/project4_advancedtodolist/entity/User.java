@@ -1,6 +1,8 @@
 package com.sparta.project4_advancedtodolist.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -44,5 +46,11 @@ public class User extends TimeStamped {
 
     public static User signup(String username, String password, String email) {
         return new User(username, password, email, UserRole.USER);
+    }
+
+    public void update(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
     }
 }
