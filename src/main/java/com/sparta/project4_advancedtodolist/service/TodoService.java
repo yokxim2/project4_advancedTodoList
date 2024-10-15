@@ -2,9 +2,7 @@ package com.sparta.project4_advancedtodolist.service;
 
 import com.sparta.project4_advancedtodolist.dto.TodoRequestDto;
 import com.sparta.project4_advancedtodolist.dto.TodoResponseDto;
-import com.sparta.project4_advancedtodolist.entity.Comment;
 import com.sparta.project4_advancedtodolist.entity.Todo;
-import com.sparta.project4_advancedtodolist.repository.CommentRepository;
 import com.sparta.project4_advancedtodolist.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,14 +12,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class TodoService {
 
     private final TodoRepository todoRepository;
-    private final CommentRepository commentRepository;
 
     public TodoResponseDto createTodo(TodoRequestDto requestDto) {
         Todo todo = todoRepository.save(
@@ -38,28 +33,19 @@ public class TodoService {
         Sort sort = Sort.by(direction, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<Todo> todoList;
-
-        todoList = todoRepository.findAll(pageable);
-
-        return todoList.map(TodoResponseDto::new);
+        return todoRepository.findAll(pageable).map(TodoResponseDto::new);
     }
 
     @Transactional
     public TodoResponseDto updateTodo(Long id, TodoRequestDto requestDto) {
         Todo existTodo = findTodoById(id);
-
         existTodo.update(requestDto.getTitle(), requestDto.getContent());
-
         return new TodoResponseDto(existTodo);
     }
 
     @Transactional
     public void deleteTodo(Long id) {
         Todo existTodo = findTodoById(id);
-
-        commentRepository.deleteAll(existTodo.getCommentList());
-
         todoRepository.delete(existTodo);
     }
 
