@@ -20,7 +20,7 @@ public class Todo extends TimeStamped {
 
     private String content;
 
-    @OneToMany(mappedBy = "todo")
+    @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL)
     List<Comment> commentList = new ArrayList<>();
 
     public Todo(String title, String content) {

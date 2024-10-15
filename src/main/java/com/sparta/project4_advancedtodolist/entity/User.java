@@ -29,16 +29,20 @@ public class User extends TimeStamped {
     @Enumerated(value = EnumType.STRING)
     private UserRole role;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserTodo> userTodoList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> commentList = new ArrayList<>();
 
-    public User(String username, String password, String email, UserRole role) {
+    private User(String username, String password, String email, UserRole role) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.role = role;
+    }
+
+    public static User signup(String username, String password, String email) {
+        return new User(username, password, email, UserRole.USER);
     }
 }
