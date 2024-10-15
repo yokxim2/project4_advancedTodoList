@@ -25,7 +25,7 @@ public class CommentService {
         Todo existTodo = todoService.findTodoById(todoId);
         User existUser = userService.findUserById(requestDto.getUserId());
 
-        Comment comment = Comment.makeComment(requestDto.getContent(), existTodo, existUser);
+        Comment comment = Comment.makeComment(existTodo, existUser, requestDto.getContent());
 
         return new CommentResponseDto(comment);
     }

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TodoRequestDto {
     @NotBlank(message = "회원 ID값은 null일 수 없습니다.")
-    private String userId;
+    private Long userId;
 
     @NotBlank(message = "제목은 필수 입력 값입니다.")
     private String title;
