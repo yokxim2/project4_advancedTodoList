@@ -31,7 +31,7 @@ public class User extends TimeStamped {
     @Enumerated(value = EnumType.STRING)
     private UserRole role;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserTodo> userTodoList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

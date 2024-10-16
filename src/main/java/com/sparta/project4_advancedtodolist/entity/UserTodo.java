@@ -18,7 +18,7 @@ public class UserTodo {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "todo_id", nullable = false)
     private Todo todo;
 
