@@ -1,11 +1,13 @@
 package com.sparta.project4_advancedtodolist.service;
 
-import com.sparta.project4_advancedtodolist.dto.CommentRequestDto;
-import com.sparta.project4_advancedtodolist.dto.CommentResponseDto;
+import com.sparta.project4_advancedtodolist.dto.comment.CommentRequestDto;
+import com.sparta.project4_advancedtodolist.dto.comment.CommentResponseDto;
+import com.sparta.project4_advancedtodolist.dto.comment.PasswordRequiredCommentRequestDto;
 import com.sparta.project4_advancedtodolist.entity.Comment;
 import com.sparta.project4_advancedtodolist.entity.Todo;
 import com.sparta.project4_advancedtodolist.entity.User;
 import com.sparta.project4_advancedtodolist.repository.CommentRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,7 @@ public class CommentService {
         User existUser = userService.findUserById(requestDto.getUserId());
 
         Comment comment = Comment.makeComment(existTodo, existUser, requestDto.getContent());
+        commentRepository.save(comment);
 
         return new CommentResponseDto(comment);
     }
@@ -41,22 +44,30 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponseDto updateComment(Long todoId, Long commentId, CommentRequestDto requestDto) {
+    public CommentResponseDto updateComment(Long todoId, Long commentId, @Valid PasswordRequiredCommentRequestDto requestDto) {
         Todo existTodo = todoService.findTodoById(todoId);
         Comment comment = findCommentById(commentId);
-        if (!checkIfTodoMatches(existTodo, comment)) {
-            throw new IllegalArgumentException("올바른 일정 ID를 입력해 주셔야 합니다.");
-        }
+        checkIfTodoMatches(existTodo, comment);
+        checkPassword(comment, requestDto.getPreviousPassword());
         comment.update(requestDto.getContent());
         return new CommentResponseDto(comment);
     }
 
     @Transactional
-    public void deleteComment(Long id) {
+    public void deleteComment(Long id, @Valid PasswordRequiredCommentRequestDto requestDto) {
+        Comment comment = findCommentById(id);
+        checkPassword(comment, requestDto.getPreviousPassword());
         commentRepository.delete(findCommentById(id));
     }
 
+
     // ==== 편의 메서드 ====
+    @Transactional
+    public void checkPassword(Comment comment, String previousPassword) {
+        if (!comment.getUser().getPassword().equals(previousPassword)) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+    }
 
     @Transactional
     public Comment findCommentById(Long id) {
@@ -67,7 +78,9 @@ public class CommentService {
         return comment;
     }
 
-    private boolean checkIfTodoMatches(Todo existTodo, Comment comment) {
-        return (existTodo == comment.getTodo());
+    private void checkIfTodoMatches(Todo existTodo, Comment comment) {
+        if (!(existTodo == comment.getTodo())) {
+            throw new IllegalArgumentException("일치하는 일정 ID 값이 아닙니다.");
+        }
     }
 }
