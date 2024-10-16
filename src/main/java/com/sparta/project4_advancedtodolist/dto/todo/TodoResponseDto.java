@@ -1,4 +1,4 @@
-package com.sparta.project4_advancedtodolist.dto;
+package com.sparta.project4_advancedtodolist.dto.todo;
 
 import com.sparta.project4_advancedtodolist.entity.Todo;
 import lombok.Getter;

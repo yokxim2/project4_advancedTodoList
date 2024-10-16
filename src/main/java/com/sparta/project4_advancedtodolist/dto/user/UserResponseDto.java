@@ -1,4 +1,4 @@
-package com.sparta.project4_advancedtodolist.dto;
+package com.sparta.project4_advancedtodolist.dto.user;
 
 import com.sparta.project4_advancedtodolist.entity.User;
 import com.sparta.project4_advancedtodolist.entity.UserRole;

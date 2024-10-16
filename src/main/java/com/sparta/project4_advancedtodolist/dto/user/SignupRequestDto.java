@@ -1,4 +1,4 @@
-package com.sparta.project4_advancedtodolist.dto;
+package com.sparta.project4_advancedtodolist.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
