@@ -1,12 +1,13 @@
 package com.sparta.project4_advancedtodolist.service;
 
-import com.sparta.project4_advancedtodolist.dto.SignupRequestDto;
-import com.sparta.project4_advancedtodolist.dto.UserRequestDto;
-import com.sparta.project4_advancedtodolist.dto.UserResponseDto;
+import com.sparta.project4_advancedtodolist.dto.user.PasswordRequiredUserRequestDto;
+import com.sparta.project4_advancedtodolist.dto.user.SignupRequestDto;
+import com.sparta.project4_advancedtodolist.dto.user.UserResponseDto;
 import com.sparta.project4_advancedtodolist.entity.User;
 import com.sparta.project4_advancedtodolist.entity.UserRole;
 import com.sparta.project4_advancedtodolist.repository.UserRepository;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,19 +60,28 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDto updateUser(Long userId, @Valid UserRequestDto requestDto) {
+    public UserResponseDto updateUser(Long userId, @Valid PasswordRequiredUserRequestDto requestDto) {
         User user = findUserById(userId);
+        checkPassword(user, requestDto.getPreviousPassword());
         user.update(requestDto.getUsername(), requestDto.getPassword(), requestDto.getEmail());
         return new UserResponseDto(user);
     }
 
     @Transactional
-    public void deleteUser(Long id) {
+    public void deleteUser(Long id, @Valid PasswordRequiredUserRequestDto requestDto) {
         User user = findUserById(id);
+        checkPassword(user, requestDto.getPreviousPassword());
         userRepository.delete(user);
     }
 
     // ==== 편의 메서드 ====
+    @Transactional
+    public void checkPassword(User user, @NotBlank(message = "이전 비밀번호를 알맞게 입력해 주세요.") String previousPassword) {
+        if (!user.getPassword().equals(previousPassword)) {
+            throw new IllegalArgumentException("비밀번호가 알맞지 않습니다.");
+        }
+    }
+
     @Transactional
     public User findUserById(Long id) {
         User user = userRepository.findById(id).orElseThrow(

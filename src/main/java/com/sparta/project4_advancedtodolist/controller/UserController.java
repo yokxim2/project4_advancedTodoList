@@ -1,19 +1,18 @@
 package com.sparta.project4_advancedtodolist.controller;
 
-import com.sparta.project4_advancedtodolist.dto.SignupRequestDto;
-import com.sparta.project4_advancedtodolist.dto.UserRequestDto;
-import com.sparta.project4_advancedtodolist.dto.UserResponseDto;
+import com.sparta.project4_advancedtodolist.dto.user.PasswordRequiredUserRequestDto;
+import com.sparta.project4_advancedtodolist.dto.user.SignupRequestDto;
+import com.sparta.project4_advancedtodolist.dto.user.UserResponseDto;
 import com.sparta.project4_advancedtodolist.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Slf4j
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class UserController {
@@ -21,7 +20,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/users/signup")
-    public UserResponseDto signup(@Valid SignupRequestDto requestDto) {
+    public UserResponseDto signup(@Valid @RequestBody SignupRequestDto requestDto) {
         return userService.signup(requestDto);
     }
 
@@ -31,13 +30,19 @@ public class UserController {
     }
 
     @PutMapping("/users/{userId}")
-    public UserResponseDto updateUser(@PathVariable Long userId, @Valid UserRequestDto requestDto) {
+    public UserResponseDto updateUser(
+            @PathVariable Long userId,
+            @Valid @RequestBody PasswordRequiredUserRequestDto requestDto
+    ) {
         return userService.updateUser(userId, requestDto);
     }
 
     @DeleteMapping("/users/{userId}")
-    public void deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
+    public void deleteUser(
+            @PathVariable Long userId,
+            @Valid @RequestBody PasswordRequiredUserRequestDto requestDto
+    ) {
+        userService.deleteUser(userId, requestDto);
     }
 
 
