@@ -41,9 +41,10 @@ public class CommentController {
 
     @DeleteMapping("/comments/{commentId}")
     public void deleteComment(
+            @PathVariable Long todoId,
             @PathVariable Long commentId,
             @Valid @RequestBody PasswordRequiredCommentRequestDto requestDto
     ) {
-        commentService.deleteComment(commentId, requestDto);
+        commentService.deleteComment(todoId, commentId, requestDto);
     }
 }

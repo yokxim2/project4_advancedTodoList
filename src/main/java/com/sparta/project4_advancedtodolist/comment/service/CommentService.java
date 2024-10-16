@@ -58,10 +58,12 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long id, @Valid PasswordRequiredCommentRequestDto requestDto) {
-        Comment comment = findCommentById(id);
+    public void deleteComment(Long todoId, Long commentId, @Valid PasswordRequiredCommentRequestDto requestDto) {
+        Todo existTodo = todoService.findTodoById(todoId);
+        Comment comment = findCommentById(commentId);
+        checkIfTodoMatches(existTodo, comment);
         checkPassword(comment, requestDto.getPreviousPassword());
-        commentRepository.delete(findCommentById(id));
+        commentRepository.delete(findCommentById(commentId));
     }
 
 
