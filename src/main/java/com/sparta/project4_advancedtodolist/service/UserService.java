@@ -5,6 +5,8 @@ import com.sparta.project4_advancedtodolist.dto.user.SignupRequestDto;
 import com.sparta.project4_advancedtodolist.dto.user.UserResponseDto;
 import com.sparta.project4_advancedtodolist.entity.User;
 import com.sparta.project4_advancedtodolist.entity.UserRole;
+import com.sparta.project4_advancedtodolist.exception.DataNotFoundException;
+import com.sparta.project4_advancedtodolist.exception.PasswordUnmatchException;
 import com.sparta.project4_advancedtodolist.repository.UserRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -78,14 +80,14 @@ public class UserService {
     @Transactional
     public void checkPassword(User user, @NotBlank(message = "이전 비밀번호를 알맞게 입력해 주세요.") String previousPassword) {
         if (!user.getPassword().equals(previousPassword)) {
-            throw new IllegalArgumentException("비밀번호가 알맞지 않습니다.");
+            throw new PasswordUnmatchException("비밀번호가 일치하지 않습니다.");
         }
     }
 
     @Transactional
     public User findUserById(Long id) {
         User user = userRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당하는 유저가 없습니다.")
+                () -> new DataNotFoundException("해당하는 유저가 존재하지 않습니다.")
         );
         return user;
     }
@@ -93,7 +95,7 @@ public class UserService {
     @Transactional
     public User findUserByUsername(String username) {
         Optional<User> user = Optional.ofNullable(userRepository.findByUsername(username).orElseThrow(
-                () -> new IllegalArgumentException("해당하는 유저가 없습니다.")
+                () -> new DataNotFoundException("해당하는 유저가 존재하지 않습니다.")
         ));
         return user.get();
     }

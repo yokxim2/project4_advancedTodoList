@@ -7,6 +7,9 @@ import com.sparta.project4_advancedtodolist.dto.todo.TodoResponseDto;
 import com.sparta.project4_advancedtodolist.entity.Todo;
 import com.sparta.project4_advancedtodolist.entity.User;
 import com.sparta.project4_advancedtodolist.entity.UserTodo;
+import com.sparta.project4_advancedtodolist.exception.DataNotFoundException;
+import com.sparta.project4_advancedtodolist.exception.PasswordUnmatchException;
+import com.sparta.project4_advancedtodolist.exception.ProhibitedAccessException;
 import com.sparta.project4_advancedtodolist.repository.TodoRepository;
 import com.sparta.project4_advancedtodolist.repository.UserTodoRepository;
 import jakarta.validation.Valid;
@@ -90,12 +93,12 @@ public class TodoService {
                 .filter(userTodo -> userTodo.getTodo().equals(existTodo))
                 .findFirst()
                 .orElseThrow(
-                        () -> new IllegalArgumentException("해당 Todo에 연결된 유저가 없습니다.")
+                        () -> new DataNotFoundException("해당하는 유저가 존재하지 않습니다.")
                 );
 
         User user = matchedUserTodo.getUser();
         if (!user.getPassword().equals(previousPassword)) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new PasswordUnmatchException("비밀번호가 일치하지 않습니다.");
         }
     }
 
@@ -107,18 +110,18 @@ public class TodoService {
                 .toList();
 
         if (!users.contains(editor)) {
-            throw new IllegalArgumentException("해당 일정에 대한 수정 권한이 없습니다.");
+            throw new ProhibitedAccessException("해당 일정에 대한 수정 권한이 없습니다.");
         }
 
         if (!editor.getPassword().equals(password)) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new PasswordUnmatchException("비밀번호가 일치하지 않습니다.");
         }
     }
 
     @Transactional
     public Todo findTodoById(Long id) {
         Todo todo = todoRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당 일정이 존재하지 않습니다.")
+                () -> new DataNotFoundException("해당 일정이 존재하지 않습니다.")
         );
         return todo;
     }
